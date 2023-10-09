@@ -418,12 +418,13 @@ localStorage.setItem('freespacefair', dataJSON);
 
         });
 
-        
+
         function myFunction() {
             polygonPoints = [];//req
             map.removeLayer(tempPolygon);//req
             map.removeLayer(marker);
             // alert("The 'Esc' key was pressed!");
+            console.log(polygonPoints);
           }
           
           // Add an event listener to the document to listen for the "keydown" event
@@ -452,7 +453,7 @@ localStorage.setItem('freespacefair', dataJSON);
             // Add the first point only once
             marker = L.marker([lat, lng]).addTo(map);
 
-            polygonPoints.push([lat, lng]);
+            // polygonPoints.push([lat, lng]);
         }
 
         polygonPoints.push([lat, lng]);
@@ -493,12 +494,15 @@ localStorage.setItem('freespacefair', dataJSON);
     document.getElementById('createPolygonButton').addEventListener('click', function (event) {
         event.preventDefault();
         console.log(polygonPoints.length);
-        if (polygonPoints.length >= 4) { // Check for at least three points to create a polygon
+        if (polygonPoints.length >= 3) { // Check for at least three points to create a polygon
             // Convert your points to Leaflet LatLng objects
             const latLngPoints = polygonPoints.map(point => L.latLng(point[0], point[1]));
 
             // Create a Leaflet polygon
             const polygon = L.polygon(latLngPoints);//req
+            const polygonPointsturfcreated = polygon._latlngs[0].map(item => [item.lng, item.lat]);
+            polygonPointsturfcreated.push(polygonPointsturfcreated[0])
+            const polygonturf = turf.polygon([polygonPointsturfcreated]);
             reqpolygon = polygon;
             console.log("polygon");
             console.log(polygon);
@@ -513,8 +517,31 @@ localStorage.setItem('freespacefair', dataJSON);
             removePolygon_points = polygonPoints;
             polygonPoints = [];//req
             map.removeLayer(tempPolygon);//req
+             let flag=true;
+            const existingPolygonDataJSON = localStorage.getItem('polygonData');
+        const existingPolygonData = JSON.parse(existingPolygonDataJSON);
+        if (existingPolygonData != null) {
+            for (var i = 0; i < existingPolygonData.length; i++) {
+                const ans = JSON.parse(existingPolygonData[i]);
+                const polygonPoints = ans._latlngs[0].map(item => [item.lat, item.lng]);
+                const polygonPointsturf = ans._latlngs[0].map(item => [item.lng, item.lat]);
+                polygonPointsturf.push(polygonPointsturf[0]);
+                const polyturf = turf.polygon([polygonPointsturf]);
+                // const latLngPoints = polygonPoints.map(point => L.latLng(point[0], point[1]));
+                // const poly = L.polygon(latLngPoints);
+                // const latLngPoints1 = poly.getLatLngs().map(latlng => [latlng.lng, latlng.lat]);
+                // const latLngPoints2 = poly.getLatLngs().map(latlng => [latlng.lng, latlng.lat]);
+            if(turf.booleanOverlap(polyturf, polygonturf))
+            {
+               flag=false;
+               break;
+            }
+            }
+        }
 
-
+        if(flag==true)
+        {
+     
             const polygonName = document.getElementById('polygonName').value;
             const polygonId = document.getElementById('polygonId').value;
 
@@ -586,8 +613,13 @@ localStorage.setItem('freespacefair', dataJSON);
                 polygonPoints = [];//req
                 alert('Please fill in all required fields.');
             }
-
-
+        }
+        else{
+            map.removeLayer(marker);
+            map.removeLayer(tempPolygon);//req
+            polygonPoints = [];//req
+            alert('Polygons overlapping');
+        }
 
         } else {
             map.removeLayer(marker);
