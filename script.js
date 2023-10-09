@@ -1,9 +1,63 @@
 let inside = 0;
 let outside = 0;
+let polygonPoints = [];
+    let reqpolygon = null;
+    let removePolygon = null;
+    let removePolygon_points = [];
+    let markers = [];
+    let polygons = [];
+    let polygonPrice = [];
+    let polygonSum = []
+    let freespacefair = [
+        {
+            "distance": 1,
+            "price": 11.95
+        },
+        {
+            "distance": 6,
+            "price": 3.35
+        },
+        {
+            "distance": 5000,
+            "price": 2.95
+        }
+    ]
+    const dataJSON = localStorage.getItem('freespacefair');
+
+// Parse the JSON string back into an array of objects
+const data = JSON.parse(dataJSON);
+
+if(data!=null)
+{
+    freespacefair=data;
+
+}
+
+    let summaryresult = [];
+    let removeall = [];
 document.addEventListener("DOMContentLoaded", function () {
 
     adjustDropdownPosition();
+    showexistingbasefare();
     // Initialize the map
+
+    for (var i = 0; i < freespacefair.length; i++) {
+        var distance = freespacefair[i].distance;
+        var price = freespacefair[i].price;
+
+        // Create a new table row
+        var newRow = $("<tr>");
+
+        // Add input fields for distance and price with the existing data
+        newRow.append("<td><input type='number' class='form-control' style='width: 100px;' placeholder='Distance' value='" + distance + "'></td>");
+        newRow.append("<td><input type='number' class='form-control' style='width: 100px;' placeholder='Price' value='" + price + "'></td>");
+
+        // Add a button to remove the row
+        newRow.append("<td><button class='btn btn-danger btn-sm remove-row'>Remove</button></td>");
+
+        // Append the new row to the table
+        $("#quote-table tbody").append(newRow);
+    }
 
     const map = L.map("map").setView([51.505, -0.09], 13); // Initial view coordinates
 
@@ -50,6 +104,13 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log(polygonId);
         });
     });
+
+
+   function showexistingbasefare(){
+
+   }
+
+
 
     function removePoly(id){
 
@@ -183,10 +244,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     const properties = e.target.properties;
                     let details = '';
                     for (const key in properties) {
-                           if(key !="priceSlabs")
+                       
+                        if(key !="priceSlabs")
                         {
                             details += `<strong>${key}:</strong> ${properties[key]}<br>`;
                         }
+                        
                     }
     
                     // Create a tooltip and open it
@@ -299,45 +362,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }).addTo(map);
 
 
-
-
-
-    let polygonPoints = [];
-    let reqpolygon = null;
-    let removePolygon = null;
-    let removePolygon_points = [];
-    let markers = [];
-    let polygons = [];
-    let polygonPrice = [];
-    let polygonSum = []
-    let freespacefair = [
-        {
-            "distance": 1,
-            "price": 11.95
-        },
-        {
-            "distance": 6,
-            "price": 3.35
-        },
-        {
-            "distance": 5000,
-            "price": 2.95
-        }
-    ]
-    const dataJSON = localStorage.getItem('freespacefair');
-
-// Parse the JSON string back into an array of objects
-const data = JSON.parse(dataJSON);
-freespacefair=data;
-
-    let summaryresult = [];
-    let removeall = [];
-
-
-
-    $(document).ready(function () {
-
-
         $("#quote-journey-btn").click(function () {
             // Create a new table row
             var newRow = $("<tr>");
@@ -393,7 +417,7 @@ localStorage.setItem('freespacefair', dataJSON);
 
 
         });
-    });
+   
 
 
     let marker = null;
