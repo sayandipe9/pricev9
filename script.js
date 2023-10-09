@@ -417,8 +417,25 @@ localStorage.setItem('freespacefair', dataJSON);
 
 
         });
-   
 
+        
+        function myFunction() {
+            polygonPoints = [];//req
+            map.removeLayer(tempPolygon);//req
+            map.removeLayer(marker);
+            // alert("The 'Esc' key was pressed!");
+          }
+          
+          // Add an event listener to the document to listen for the "keydown" event
+          document.addEventListener("keydown", function(event) {
+            // Check if the pressed key is the "Escape" key
+            if (event.key === "Escape") {
+              // Call your function when "Esc" is pressed
+              myFunction();
+            }
+          });
+          
+        
 
     let marker = null;
 
@@ -566,6 +583,7 @@ localStorage.setItem('freespacefair', dataJSON);
             } else {
                 map.removeLayer(marker);
                 map.removeLayer(tempPolygon);//req
+                polygonPoints = [];//req
                 alert('Please fill in all required fields.');
             }
 
@@ -574,6 +592,7 @@ localStorage.setItem('freespacefair', dataJSON);
         } else {
             map.removeLayer(marker);
             map.removeLayer(tempPolygon);//req
+            polygonPoints = [];//req
             alert('Please select at least three points to create a polygon.');
         }
     });
