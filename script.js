@@ -183,7 +183,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     const properties = e.target.properties;
                     let details = '';
                     for (const key in properties) {
-                        details += `<strong>${key}:</strong> ${properties[key]}<br>`;
+                           if(key !="priceSlabs")
+                        {
+                            details += `<strong>${key}:</strong> ${properties[key]}<br>`;
+                        }
                     }
     
                     // Create a tooltip and open it
